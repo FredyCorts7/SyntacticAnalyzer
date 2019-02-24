@@ -1,7 +1,10 @@
 <template>
   <div id="app">
-    <img alt="Python logo" width="100" height="100" src="../public/imgs/logopython.png">
-    <img alt="Vue logo" width="100" height="100" src="./assets/logo.png">
+    <h1>Syntactic analyzer of Python with Vue js</h1> 
+    <b-row class="justify-content-md-center">
+      <img alt="Python logo" width="100" height="100" src="../public/imgs/logopython.png">
+      <img alt="Vue logo" width="100" height="100" src="./assets/logo.png">
+    </b-row>
     <HelloWorld/>
   </div>
 </template>
@@ -23,11 +26,9 @@ export default {
     padding: 0;
   }
   #app {
-    font-family: sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
     margin-top: 30px;
   }
 </style>

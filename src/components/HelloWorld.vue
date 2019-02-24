@@ -1,20 +1,24 @@
 <template>
-  <b-container>
-    <b-row class="justify-content-md-center" align-v="center">
+  <b-container fluid>
+    <br>
+    <b-row class="justify-content-md-center" align-v="center" cols="12">
+      <b-col sm="6" lg="6" xl="5">
+        <p>Te recomendamos aprender Python desde cero, de una forma sencilla y muy práctica.</p>
+        <iframe width="95%" height="300" src="https://www.youtube-nocookie.com/embed/G2FCfQj-9ig" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </b-col>
       <b-col sm="6" lg="6" xl="6">
         <b-form-textarea
+          ref="refcode"
           id="txtcode"
           v-model="code"
+          class="white-color"
           placeholder="#Start to write code"
           rows="15"
         />
       </b-col>
-      <b-col sm="5" lg="5" xl="5">
-        <p>Te recomendamos aprender Python desde cero, de una forma sencilla y muy práctica.</p>
-        <iframe width="100%" height="300" src="https://www.youtube-nocookie.com/embed/G2FCfQj-9ig" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </b-col>
-      <p>&#169;Copyright</p>
     </b-row>
+    <br>
+    <p>&#169;Copyright</p>
   </b-container>
 </template>
 
@@ -26,16 +30,17 @@
   body {
     font-family: "varela round"
   }
-  h1, p {
-    font-weight: bolder;
-    font-family: "varela round"
-  }
   #txtcode {
-    font-family: "varela round" !important;
-    font-size: 12px !important;
-    background-color: #161616 !important;
+    font-family: "varela round";
+    font-size: 14px;
+    background-color: #161616 !important
+  }
+  .red-color {
+    color: yellow !important;
+  }
+
+  .white-color {
     color: white !important;
-    border-radius: 15px !important;
   }
 </style>
 
@@ -155,10 +160,13 @@ export default {
         this.cont = 0
         this.q0()
       }*/
-      if (this.accepted) document.getElementById("txtcode").style.color = "white !important";
-      else {
-        document.getElementById("txtcode").style.color = "red !important";
-        this.$toastr.error("You can that have a error", "Faile");
+      if (this.accepted) {
+        this.$refs.refcode.$el.classList.remove('red-color')
+        this.$refs.refcode.$el.classList.add('white-color')
+      } else {
+        this.$refs.refcode.$el.classList.remove('white-color')
+        this.$refs.refcode.$el.classList.add('red-color')
+        this.$toastr.error("You can that have a error", "Faile")
       }
     },
     q0() {

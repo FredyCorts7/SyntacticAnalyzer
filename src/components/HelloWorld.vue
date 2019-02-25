@@ -9,6 +9,7 @@
       <b-col sm="6" lg="6" xl="6">
         <b-form-textarea
           ref="refcode"
+          :state=accepted
           id="txtcode"
           v-model="code"
           class="white-color"
@@ -66,19 +67,15 @@
     },
     created () {
       this.$toastr.info('You can begin to program in Python', 'Welcome')
-      this.debouncedisAccepted = _.debounce(this.isAccepted(), 500)
+      this.debouncedisAccepted = _.debounce(this.isAccepted, 100)
     },
     watch: {
         code: function (newCode, oldCode) {
-            this.isAccepted()
             this.debouncedisAccepted()
         }
     },
     methods: {
-      isAccepted() {
-        this.$forceUpdate()
-        console.log(this.code)
-        console.log('Empezamos a evaluar')
+      isAccepted: function() {
         this.cont = 0
         this.accepted = false
         this.stack = ['Z']
@@ -99,8 +96,6 @@
         }*/
       },
       q0 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -119,6 +114,8 @@
             this.q0()
           } else if (letters.indexOf(char) > -1 && pop == 'O') {
             this.q0()
+          } else if (numbers.indexOf(char) > -1 && pop == 'O') {
+            this.q0()
           } else if (numbers.indexOf(char) > -1 && pop == 'V') {
             this.q0()
           } else if (numbers.indexOf(char) > -1 && pop == 'C') {
@@ -127,6 +124,8 @@
             this.q0()
           } else if (numbers.indexOf(char) > -1 && pop == 'N') {
             this.q0()
+          } else if (char == ' ' && pop == 'Z') {
+            this.q0()
           } else if (char == ' ' && pop == 'V') {
             this.stack.pop()
             this.stack.push('B')
@@ -134,6 +133,10 @@
           } else if (char == ' ' && pop == 'B') {
             this.q0()
           } else if (char == ' ' && pop == 'C') {
+            this.stack.pop()
+            this.stack.push('O')
+            this.q0()
+          } else if (char == ' ' && pop == 'N') {
             this.stack.pop()
             this.stack.push('O')
             this.q0()
@@ -191,13 +194,8 @@
             this.q1()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q0')
       },
       q1 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -281,13 +279,8 @@
             this.q5()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q1')
       },
       q2 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -299,13 +292,8 @@
             this.q0()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q2')
       },
       q3 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -350,13 +338,8 @@
             this.q9()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q3')
       },
       q4 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -391,13 +374,8 @@
             this.q0()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q4')
       },
       q5 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -447,22 +425,12 @@
             this.q0()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q5')
       },
       q6 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         //Este es el estado de aceptación
         this.accepted = true
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q6')
       },
       q7 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -472,13 +440,8 @@
             this.q8()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q7')
       },
       q8 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -490,13 +453,8 @@
             this.q0()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q8')
       },
       q9 () {
-        console.log(this.code[this.cont])
-        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -506,9 +464,6 @@
             this.q8()
           }
         }
-        console.log(this.code[this.cont])
-        console.log(this.stack)
-        console.log('estoy en q9')
       }
     }
   }

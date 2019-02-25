@@ -66,7 +66,7 @@
     },
     created () {
       this.$toastr.info('You can begin to program in Python', 'Welcome')
-      this.debouncedisAccepted = _.debounce(this.isAccepted(), 800)
+      this.debouncedisAccepted = _.debounce(this.isAccepted(), 500)
     },
     watch: {
         code: function (newCode, oldCode) {
@@ -76,6 +76,9 @@
     },
     methods: {
       isAccepted() {
+        this.$forceUpdate()
+        console.log(this.code)
+        console.log('Empezamos a evaluar')
         this.cont = 0
         this.accepted = false
         this.stack = ['Z']
@@ -89,12 +92,15 @@
           this.$refs.refcode.$el.classList.add('red-color')
           this.$toastr.error("Still not ready to compile", "Faile")
         }
+
         /*Probando que el salto de linea se registre
         for (let i = 0; i < this.code.length; i++) {
-          if(this.code[i] == '\n') this.$toastr.info("Acabas de hacer un salto de linea", "Information")
+          if(this.code[i] == "/n") this.$toastr.info("Acabas de hacer un /n", "Information")
         }*/
       },
       q0 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -137,7 +143,7 @@
             this.stack.pop()
             this.stack.push('I')
             this.q0()
-          } else if (char == 'i' && pop == 'I') {
+          } else if (letters.indexOf(char) > -1 && pop == 'I' && char != 'f') {
             this.stack.pop()
             this.stack.push('A')
             this.stack.push('V')
@@ -190,6 +196,8 @@
         console.log('estoy en q0')
       },
       q1 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -211,6 +219,10 @@
             this.q1()
           } else if (char == ' ' && pop == 'B') {
             this.q1()
+          } else if (char == ' ' && pop == 'D') {
+            this.stack.pop()
+            this.stack.push('B')
+            this.q1()
           } else if (numbers.indexOf(char) > -1 && pop == 'D') {
             this.stack.pop()
             this.stack.push('E')
@@ -227,37 +239,45 @@
             this.stack.pop()
             this.stack.push('E')
             this.q3()
-          } else if (char == '"' > -1 && pop == 'B') {
+          } else if (char == '"' && pop == 'B') {
             this.stack.pop()
             this.stack.push('C')
             this.q4()
-          } else if (char == '"' > -1 && pop == 'S') {
+          } else if (char == '"' && pop == 'S') {
             this.stack.pop()
             this.stack.push('C')
             this.q4()
-          } else if (char == "'" > -1 && pop == 'B') {
+          } else if (char == "'" && pop == 'B') {
             this.stack.pop()
             this.stack.push('C')
             this.q4()
-          } else if (char == "'" > -1 && pop == 'S') {
+          } else if (char == "'" && pop == 'S') {
             this.stack.pop()
             this.stack.push('C')
             this.q4()
-          } else if (char == 'T' > -1 && pop == 'S') {
+          } else if (char == 'T' && pop == 'S') {
             this.stack.pop()
             this.stack.push('T')
             this.q5()
-          } else if (char == 'T' > -1 && pop == 'B') {
+          } else if (char == 'T' && pop == 'B') {
             this.stack.pop()
             this.stack.push('T')
             this.q5()
-          } else if (char == 'F' > -1 && pop == 'S') {
+          } else if (char == 'F' && pop == 'S') {
             this.stack.pop()
             this.stack.push('F')
             this.q5()
-          } else if (char == 'F' > -1 && pop == 'B') {
+          } else if (char == 'F' && pop == 'B') {
             this.stack.pop()
             this.stack.push('F')
+            this.q5()
+          } else if (char == 'F' && pop == 'D') {
+            this.stack.pop()
+            this.stack.push('F')
+            this.q5()
+          } else if (char == 'T' && pop == 'D') {
+            this.stack.pop()
+            this.stack.push('T')
             this.q5()
           }
         }
@@ -266,12 +286,14 @@
         console.log('estoy en q1')
       },
       q2 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
           this.cont++
           let pop = s.pop()
-          if (char == ' ' > -1 && pop == 'F') {
+          if (char == ' ' && pop == 'F') {
             this.stack.pop()
             this.stack.push('C')
             this.q0()
@@ -282,6 +304,8 @@
         console.log('estoy en q2')
       },
       q3 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -294,6 +318,18 @@
             this.stack.pop()
             this.stack.push('A')
             this.q3()
+          } else if (char == ' ' && pop == 'A') {
+            this.q3()
+          } else if (char == '\n' && pop == 'E' && pop2 == 'A') {
+            this.stack.pop()
+            this.stack.pop()
+            this.stack.push('Z')
+            this.q0()
+          } else if (char == '\n' && pop == 'A' && pop2 == 'A') {
+            this.stack.pop()
+            this.stack.pop()
+            this.stack.push('Z')
+            this.q0()
           } else if (char == undefined && pop == 'E' && pop2 == "A") {
             this.stack.pop()
             this.stack.pop()
@@ -307,6 +343,11 @@
             this.stack.pop()
             this.stack.push('C')
             this.q9()
+          } else if (char == ':' && pop == 'A' && pop2 == "C") {
+            this.stack.pop()
+            this.stack.pop()
+            this.stack.push('C')
+            this.q9()
           }
         }
         console.log(this.code[this.cont])
@@ -314,6 +355,8 @@
         console.log('estoy en q3')
       },
       q4 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -353,6 +396,8 @@
         console.log('estoy en q4')
       },
       q5 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -407,6 +452,8 @@
         console.log('estoy en q5')
       },
       q6 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         //Este es el estado de aceptación
         this.accepted = true
         console.log(this.code[this.cont])
@@ -414,6 +461,8 @@
         console.log('estoy en q6')
       },
       q7 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -428,6 +477,8 @@
         console.log('estoy en q7')
       },
       q8 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
@@ -444,6 +495,8 @@
         console.log('estoy en q8')
       },
       q9 () {
+        console.log(this.code[this.cont])
+        console.log(this.stack)
         if (this.cont <= this.code.length) {
           let s = this.stack.slice()
           let char = this.code[this.cont]
